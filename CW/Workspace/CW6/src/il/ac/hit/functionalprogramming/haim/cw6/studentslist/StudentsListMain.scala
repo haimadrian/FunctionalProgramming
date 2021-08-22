@@ -26,10 +26,10 @@ object StudentsListMain {
 
     // 2. Best student
     println()
-    val reducer = (stud1: Student, stud2: Student) => if (stud1.average > stud2.average) stud1 else stud2
-    println(s"Best student: ${students.reduceLeft(reducer)}")
+    val reducerMaxAverage = (stud1: Student, stud2: Student) => if (stud1.average > stud2.average) stud1 else stud2
+    println(s"Best student: ${students.reduceLeft(reducerMaxAverage)}")
 
-    // 3. Overall average
+    // 3. Overall average - use foldLeft to calculate the sum and divide it by amount of students.
     println()
     println(s"Overall Average: ${students.map(_.average).foldLeft(0.0)((avg1, avg2) => avg1 + avg2) / students.length}")
   }

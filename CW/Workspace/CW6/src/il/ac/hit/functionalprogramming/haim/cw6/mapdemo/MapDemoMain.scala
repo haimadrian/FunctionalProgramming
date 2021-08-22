@@ -19,6 +19,7 @@ object MapDemoMain {
       println(some2.get)
     }
 
+    // Find max element using reduceLeft
     val lst = List(1, 4, 2, 6, 3)
     println(lst.reduceLeft(Math.max))
   }

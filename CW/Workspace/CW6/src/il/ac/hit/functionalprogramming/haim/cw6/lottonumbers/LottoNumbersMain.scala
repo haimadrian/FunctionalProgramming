@@ -13,17 +13,19 @@ object LottoNumbersMain {
   def main(args: Array[String]): Unit = {
     val maxNum = 42
     val amountOfNumbers = 6
-    val numbersSeed = 1 to maxNum
 
     var lottoNumbers: Set[Int] = Set()
     val rand = new Random()
 
+    // Loop
+    val numbersSeed = 1 to maxNum
     while (lottoNumbers.size < amountOfNumbers) {
-      lottoNumbers += numbersSeed(rand.nextInt(maxNum));
+      lottoNumbers += numbersSeed(rand.nextInt(maxNum))
     }
 
     println(s"Lotto numbers: $lottoNumbers")
 
+    // One line using shuffle
     println()
     println(s"Lotto numbers, 1 liner: ${rand.shuffle((1 to maxNum).toList).slice(0, amountOfNumbers)}")
   }
