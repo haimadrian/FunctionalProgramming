@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/expensemanagement/.idea/modules/expensemanagement.iml" filepath="$PROJECT_DIR$/expensemanagement/.idea/modules/expensemanagement.iml" />
+      <module fileurl="file://$PROJECT_DIR$/expensemanagement/.idea/modules/expensemanagement-build.iml" filepath="$PROJECT_DIR$/expensemanagement/.idea/modules/expensemanagement-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/expensestatistics/.idea/modules/expensestatistics.iml" filepath="$PROJECT_DIR$/expensestatistics/.idea/modules/expensestatistics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/expensestatistics/.idea/modules/expensestatistics-build.iml" filepath="$PROJECT_DIR$/expensestatistics/.idea/modules/expensestatistics-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/usermanagement/.idea/modules/usermanagement.iml" filepath="$PROJECT_DIR$/usermanagement/.idea/modules/usermanagement.iml" />
+      <module fileurl="file://$PROJECT_DIR$/usermanagement/.idea/modules/usermanagement-build.iml" filepath="$PROJECT_DIR$/usermanagement/.idea/modules/usermanagement-build.iml" />
+    </modules>
+  </component>
+</project>
