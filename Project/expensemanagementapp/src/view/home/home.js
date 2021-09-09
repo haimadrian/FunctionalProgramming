@@ -2,12 +2,16 @@ import React from 'react';
 import userToken from "../user/userToken";
 import "./home.css";
 import {Redirect} from "react-router-dom";
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
+import Profile from "./tabs/profile"
+import Manage from "./tabs/manage"
+import Statistics from "./tabs/statistics"
+import About from "./tabs/about"
 
 export default function Home() {
     // If user is not signed in, redirect to the sign in page.
     if (userToken.token === undefined || userToken.token === '') {
-        return (<Redirect to="/signin" />);
+        return (<Redirect to="/signin"/>);
     }
 
     return (
@@ -30,6 +34,9 @@ export default function Home() {
                     <Tab>
                         <p>Statistics</p>
                     </Tab>
+                    <Tab>
+                        <p>About</p>
+                    </Tab>
                 </TabList>
 
                 <TabPanel>
@@ -47,35 +54,13 @@ export default function Home() {
                         <Statistics/>
                     </div>
                 </TabPanel>
+                <TabPanel>
+                    <div className="panel-content">
+                        <About/>
+                    </div>
+                </TabPanel>
             </Tabs>
 
         </div>
     );
-}
-
-class Profile extends React.Component {
-    render() {
-        return (<div className="logo">
-            <i><img src={"/logo192.png"} alt={"Logo"}/></i>
-            <span> Sign in </span>
-        </div>);
-    }
-}
-
-class Manage extends React.Component {
-    render() {
-        return (<div className="logo">
-            <i><img src={"/logo192.png"} alt={"Logo"}/></i>
-            <span> Sign in </span>
-        </div>);
-    }
-}
-
-class Statistics extends React.Component {
-    render() {
-        return (<div className="logo">
-            <i><img src={"/logo192.png"} alt={"Logo"}/></i>
-            <span> Sign in </span>
-        </div>);
-    }
 }
