@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
 import './App.css';
 import './font-awesome.min.css';
 import Login from './view/user/login';
@@ -14,6 +14,11 @@ function App() {
         <div className="App">
             <BrowserRouter>
                 <Switch>
+                    <Route exact path="/" render={() => {
+                        return (<Redirect to="/home"/>);
+                    }
+                    }
+                    />
                     <Route path="/home">
                         <Home/>
                     </Route>

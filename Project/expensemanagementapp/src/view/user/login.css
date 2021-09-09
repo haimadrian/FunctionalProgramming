@@ -188,7 +188,7 @@
 }
 
 #facebookIcon {
-    background-image: url("http://localhost:3000/facebook.svg");
+    background-image: url("../facebook.svg");
     background-repeat: no-repeat;
     background-color: transparent;
     border-width: 0;
@@ -197,7 +197,7 @@
 }
 
 #googleIcon {
-    background-image: url("http://localhost:3000/google.svg");
+    background-image: url("../google.svg");
     background-repeat: no-repeat;
     background-color: transparent;
     border-width: 0;
