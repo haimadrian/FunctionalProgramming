@@ -7,11 +7,13 @@ class UserToken {
 
     // Function to save token to local storage
     saveToken(userToken) {
-        if (userToken.token !== '') {
+        if (userToken !== '') {
             // Save to local storage so we will be able to skip sign in when
             // reopening the browser, or opening a new tab.
-            localStorage.setItem(UserToken.#key, JSON.stringify(userToken));
-            this.token = userToken.token;
+            localStorage.setItem(UserToken.#key, userToken);
+            this.token = userToken;
+        } else {
+            localStorage.removeItem(UserToken.#key);
         }
     };
 
@@ -21,8 +23,7 @@ class UserToken {
 
         if (tokenString) {
             try {
-                const userToken = JSON.parse(tokenString);
-                this.token = userToken?.token;
+                this.token = tokenString;
             } catch (error) {
                 console.error(error);
             }

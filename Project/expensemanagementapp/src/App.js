@@ -1,27 +1,27 @@
 import React from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import './App.css';
-import Login from './user/login';
-import userToken from './user/userToken';
-import Dashboard from './dashboard/dashboard';
+import './font-awesome.min.css';
+import Login from './view/user/login';
+import Logout from './view/user/logout';
+import userToken from './view/user/userToken';
+import Home from './view/home/home';
 
 function App() {
     userToken.loadToken();
 
-    if (userToken.token === undefined || userToken.token === '') {
-        return (<Login setToken={ userToken.saveToken }/>);
-    }
-
     return (
         <div className="App">
-            <h1>Expense Management Application</h1>
             <BrowserRouter>
                 <Switch>
                     <Route path="/home">
-                        <Dashboard/>
+                        <Home/>
                     </Route>
                     <Route path="/signin">
-                        <Login/>
+                        <Login setToken={userToken.saveToken}/>
+                    </Route>
+                    <Route path="/signout">
+                        <Logout setToken={userToken.saveToken}/>
                     </Route>
                 </Switch>
             </BrowserRouter>
