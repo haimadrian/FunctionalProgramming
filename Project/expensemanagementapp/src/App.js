@@ -28,6 +28,9 @@ function App() {
                     <Route path="/signout">
                         <Logout setToken={userToken.saveToken}/>
                     </Route>
+                    <Route path="/signup">
+                        <Home/>
+                    </Route>
                 </Switch>
             </BrowserRouter>
         </div>

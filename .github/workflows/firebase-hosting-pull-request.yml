@@ -16,6 +16,6 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_EXPENSEMANAGEMENT_20843 }}'
-          projectId: expensemanagement-20843
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_EXPENSEAPPHIT }}'
+          projectId: expenseapphit
           entryPoint: ./Project/expensemanagementapp
