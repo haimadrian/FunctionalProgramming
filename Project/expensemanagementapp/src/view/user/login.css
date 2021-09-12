@@ -110,6 +110,14 @@
     color: rgba(150, 150, 150, 0.9);
 }
 
+#labelError {
+    align-self: center;
+    padding-top: 0.6rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    color: rgba(255, 84, 84, 0.9);
+}
+
 .edit {
     display: flex;
     direction: ltr;

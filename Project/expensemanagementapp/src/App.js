@@ -6,9 +6,19 @@ import Login from './view/user/login';
 import Logout from './view/user/logout';
 import userToken from './view/user/userToken';
 import Home from './view/home/home';
+import {auth} from "./firebase";
 
 function App() {
     userToken.loadToken();
+
+    // Listen to id token updates so we can persist it.
+    auth.onIdTokenChanged(user => {
+        if (user !== null) {
+            user.getIdToken(true).then(idToken => {
+                userToken.saveToken(idToken);
+            });
+        }
+    });
 
     return (
         <div className="App">
@@ -23,7 +33,7 @@ function App() {
                         <Home/>
                     </Route>
                     <Route path="/signin">
-                        <Login setToken={userToken.saveToken}/>
+                        <Login/>
                     </Route>
                     <Route path="/signout">
                         <Logout setToken={userToken.saveToken}/>

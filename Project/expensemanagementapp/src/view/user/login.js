@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {GoogleAuthProvider, FacebookAuthProvider, UserCredential} from "firebase/auth";
+import {GoogleAuthProvider} from "firebase/auth";
 import ReactTooltip from "react-tooltip";
 import './login.css';
 import {auth} from "../../firebase";
@@ -10,10 +9,10 @@ import {Redirect} from "react-router-dom";
 export default class Login extends React.Component {
     constructor(props) {
         super(props);
-        this.setToken = props.setToken;
         this.state = {
             username: '',
-            password: ''
+            password: '',
+            errorMessage: ''
         };
 
         // Bind our own functions so we will not have "this is undefined" errors
@@ -51,11 +50,13 @@ export default class Login extends React.Component {
     }
 
     async onFacebookButtonClicked(e) {
-        const provider = new FacebookAuthProvider();
+        this.setState({errorMessage: 'Facebook login will be available soon'});
+
+        /*const provider = new FacebookAuthProvider();
 
         auth.signInWithRedirect(provider)
             .then(this.userSignInSuccess)
-            .catch(this.userSignInFailure);
+            .catch(this.userSignInFailure);*/
     }
 
     async onGoogleButtonClicked(e) {
@@ -70,24 +71,53 @@ export default class Login extends React.Component {
             .catch(this.userSignInFailure);
     }
 
-    userSignInSuccess(userCredential: UserCredential) {
-        // The signed-in user info.
-        const user = userCredential.user;
-
-        this.setToken(user.uid);
-
+    userSignInSuccess() {
         // Go to home page after successful sign in
         window.location.href = '/home';
     }
 
     userSignInFailure(error) {
+        /**
+         * Error message from Firebase reveals that it is a "Firebase:" error, so we
+         * remove this information from the error message.
+         * In addition, there might be additional information that we would like to
+         * remove from the message, for security purposes.
+         * For example, the message:
+         * <pre>
+         * Firebase: There is no user record corresponding to this identifier. The user may have been deleted. (auth/user-not-found).
+         * </pre>
+         * will be displayed as:
+         * <pre>
+         * There is no user record corresponding to this identifier
+         * </pre>
+         * @returns string error message
+         */
+        function extractShortErrorMessage() {
+            let detailMessage = error.message.split(':');
+            let errorMessage = detailMessage[0];
+
+            if (detailMessage.length > 1) {
+                errorMessage = detailMessage[1].trim();
+            }
+
+            detailMessage = errorMessage.split('.');
+            errorMessage = detailMessage[0];
+
+            return errorMessage;
+        }
+
         // Handle Errors here.
         let errorCode = error.code;
-        let errorMessage = error.message;
+        let errorMessage = extractShortErrorMessage();
+
         // The email of the user's account used.
         let email = error.email;
+
         // The firebase.auth.AuthCredential type that was used.
         let credential = error.credential;
+
+        console.log(`${errorCode}, ${errorMessage}, ${email}, ${credential}`);
+        this.setState({errorMessage: errorMessage});
 
         console.error(error);
     }
@@ -108,16 +138,13 @@ export default class Login extends React.Component {
                                onChange={this.onPwdChange.bind(this)}/>
                     <button type="submit">Sign In</button>
                 </form>
+                <label id='labelError'>{this.state.errorMessage}</label>
                 <OtherSignInMethods onGoogleClick={this.onGoogleButtonClicked.bind(this)}
                                     onFacebookClick={this.onFacebookButtonClicked.bind(this)}/>
                 <SignUp/>
             </div>
         )
     }
-};
-
-Login.propTypes = {
-    setToken: PropTypes.func.isRequired
 };
 
 class Logo extends React.Component {
@@ -137,7 +164,7 @@ class FormInput extends React.Component {
                 <label id='label'>{this.props.description}</label>
                 <div className='edit'>
                     <input type={this.props.type} placeholder={this.props.placeholder}
-                           onChange={this.props.onChange} required autoComplete='false'/>
+                           onChange={this.props.onChange} required autoComplete='true'/>
                     <label className='labelDrawable'/>
                 </div>
             </div>

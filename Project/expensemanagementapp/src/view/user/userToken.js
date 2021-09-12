@@ -11,10 +11,11 @@ class UserToken {
             // Save to local storage so we will be able to skip sign in when
             // reopening the browser, or opening a new tab.
             localStorage.setItem(UserToken.#key, userToken);
-            this.token = userToken;
         } else {
             localStorage.removeItem(UserToken.#key);
         }
+
+        this.token = userToken;
     };
 
     // Function to get token from local storage
