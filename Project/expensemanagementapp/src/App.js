@@ -1,5 +1,10 @@
 import React from 'react';
-import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
+import {
+    Route,
+    Switch,
+    Redirect,
+    useHistory
+} from 'react-router-dom';
 import './App.css';
 import './font-awesome.min.css';
 import Login from './view/user/login';
@@ -8,7 +13,8 @@ import userToken from './view/user/userToken';
 import Home from './view/home/home';
 import {auth} from "./firebase";
 
-function App() {
+export default function App(props) {
+    props.history = useHistory();
     userToken.loadToken();
 
     // Listen to id token updates so we can persist it.
@@ -16,35 +22,34 @@ function App() {
         if (user !== null) {
             user.getIdToken(true).then(idToken => {
                 userToken.saveToken(idToken);
+
+                // Go to home page after successful sign in
+                props.history.replace('/home');
             });
         }
     });
 
     return (
         <div className="App">
-            <BrowserRouter>
-                <Switch>
-                    <Route exact path="/" render={() => {
-                        return (<Redirect to="/home"/>);
-                    }
-                    }
-                    />
-                    <Route path="/home">
-                        <Home/>
-                    </Route>
-                    <Route path="/signin">
-                        <Login/>
-                    </Route>
-                    <Route path="/signout">
-                        <Logout setToken={userToken.saveToken}/>
-                    </Route>
-                    <Route path="/signup">
-                        <Home/>
-                    </Route>
-                </Switch>
-            </BrowserRouter>
+            <Switch>
+                <Route exact path="/" render={() => {
+                    return (<Redirect to="/home"/>);
+                }
+                }
+                />
+                <Route path="/home" history={props.history}>
+                    <Home/>
+                </Route>
+                <Route path="/signin" history={props.history}>
+                    <Login/>
+                </Route>
+                <Route path="/signout" history={props.history}>
+                    <Logout setToken={userToken.saveToken} history={props.history}/>
+                </Route>
+                <Route path="/signup" history={props.history}>
+                    <Home/>
+                </Route>
+            </Switch>
         </div>
     );
 }
-
-export default App;

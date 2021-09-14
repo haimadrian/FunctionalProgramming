@@ -23,7 +23,6 @@ export default class Login extends React.Component {
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.onFacebookButtonClicked = this.onFacebookButtonClicked.bind(this);
         this.onGoogleButtonClicked = this.onGoogleButtonClicked.bind(this);
-        this.userSignInSuccess = this.userSignInSuccess.bind(this);
         this.userSignInFailure = this.userSignInFailure.bind(this);
     }
 
@@ -45,7 +44,6 @@ export default class Login extends React.Component {
         };
 
         auth.signInWithEmailAndPassword(credentials.username, credentials.password)
-            .then(this.userSignInSuccess)
             .catch(this.userSignInFailure);
     }
 
@@ -67,13 +65,7 @@ export default class Login extends React.Component {
         });
 
         auth.signInWithRedirect(provider)
-            .then(this.userSignInSuccess)
             .catch(this.userSignInFailure);
-    }
-
-    userSignInSuccess() {
-        // Go to home page after successful sign in
-        window.location.href = '/home';
     }
 
     userSignInFailure(error) {

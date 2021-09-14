@@ -5,14 +5,16 @@ import './logout.css';
 
 export default function Logout(props) {
     // Sign out of Firebase, update the local storage and navigate to sign in page.
-    auth.signOut().then(() => {
-        // Sign-out successful.
-        props.setToken('');
-        window.location.href = '/signin';
-    }).catch((error) => {
-        // An error happened.
-        console.error(error);
-    });
+    auth.signOut()
+        .then(() => {
+            // Sign-out successful.
+            props.setToken('');
+            props.history.replace('/signin');
+        })
+        .catch((error) => {
+            // An error happened.
+            console.error(error);
+        });
 
     // Display a spinner while signing out of Firebase. (Loading... animation)
     return (
