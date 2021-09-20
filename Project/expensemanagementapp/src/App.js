@@ -21,6 +21,7 @@ export default function App() {
     if (token !== null && token !== undefined && token !== '') {
         // Set Authorization header globally, so we do not have to repeat it.
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        axios.defaults.headers.common['Content-Type'] = `application/json`;
     }
 
     // Listen to id token updates so we can persist it.

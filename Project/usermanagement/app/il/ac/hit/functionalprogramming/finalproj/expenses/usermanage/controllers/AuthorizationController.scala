@@ -1,25 +1,25 @@
 package il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers
 
+import il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.models.UserAuthInfo
+import play.api.libs.json.JsValue
+import play.api.mvc._
+
 import javax.inject._
 
-import play.api.mvc._
-import il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.services.Counter
-
 /**
- * This controller demonstrates how to use dependency injection to
- * bind a component into a controller class. The class creates an
- * `Action` that shows an incrementing count to users. The [[Counter]]
- * object is injected by the Guice dependency injection system.
+ * This controller created so other micro services of expense management application will be able to
+ * authorize users at their backend.
  */
 @Singleton
-class AuthorizationController @Inject()(cc: ControllerComponents,
-                                        counter: Counter) extends AbstractController(cc) {
+class AuthorizationController @Inject()(auth: SessionAction, cc: ControllerComponents)
+  extends JsonController(cc) {
 
   /**
-   * Create an action that responds with the [[Counter]]'s current
-   * count. The result is plain text. This `Action` is mapped to
-   * `GET /count` requests by an entry in the `routes` config file.
+   * An action responsible for authorizing a request.<br/>
+   * This action is exposed so our other micros services can authorize users.
    */
-  def count = Action { Ok(counter.nextCount().toString) }
+  def auth: Action[JsValue] = auth(parse.json) { request: SessionRequest[_] =>
+    retOk(UserAuthInfo(request.userId, request.email, ""))
+  }
 
 }
