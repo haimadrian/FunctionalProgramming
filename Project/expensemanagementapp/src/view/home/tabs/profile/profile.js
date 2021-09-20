@@ -67,7 +67,7 @@ export default function Profile() {
             dateOfBirth = dateOfBirth["$date"]
         }
 
-        if (userInfo.dateOfBirth) {
+        if (dateOfBirth) {
             let date = new Date(dateOfBirth);
             let year = new Intl.DateTimeFormat('en', {year: 'numeric'}).format(date);
             let month = new Intl.DateTimeFormat('en', {month: '2-digit'}).format(date);
@@ -118,7 +118,6 @@ export default function Profile() {
 
                 // response.data refers to null when user has not signed up
                 if (response.data != null) {
-                    console.error(response.data);
                     refreshUserModel(response.data);
                 }
             })
