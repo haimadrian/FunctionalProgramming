@@ -62,8 +62,13 @@ export default function Profile() {
             setIfExists(address.country, setCountry);
         }
 
-        if (userInfo.dateOfBirth) {
-            let date = new Date(userInfo.dateOfBirth);
+        let dateOfBirth = userInfo.dateOfBirth;
+        if (dateOfBirth && dateOfBirth["$date"]) {
+            dateOfBirth = dateOfBirth["$date"]
+        }
+
+        if (dateOfBirth) {
+            let date = new Date(dateOfBirth);
             let year = new Intl.DateTimeFormat('en', {year: 'numeric'}).format(date);
             let month = new Intl.DateTimeFormat('en', {month: '2-digit'}).format(date);
             let day = new Intl.DateTimeFormat('en', {day: '2-digit'}).format(date);
