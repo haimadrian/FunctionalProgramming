@@ -27,11 +27,19 @@
     box-sizing: border-box;
 }
 
+.vert {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    clear: both;
+    box-sizing: border-box;
+}
+
 .card-vertical {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
+    width: 95%;
     padding: 0.5rem;
     background-color: white;
     border-style: double;

@@ -4,6 +4,9 @@ import NewExpense from "./components/NewExpense/NewExpense";
 import axios from "axios";
 import urls from "../../../../model/backend_url";
 import {potentiallyRefreshToken} from "../../../../firebase";
+import Card from "./components/UI/Card";
+import FilterDates from "../statistic/Options/ComboBoxList";
+import PieChartStatistics from "../statistic/PieChartStatistic/PieChartStatistics";
 
 //App is Main intrance
 const App = () => {
@@ -25,7 +28,7 @@ const App = () => {
     }, []);
 
 
-    axios.post(urls.totalDataCount)
+    axios.get(urls.totalDataCount)
         .then(response => {
             setTotalDataCount(response.data);
         })
@@ -33,7 +36,7 @@ const App = () => {
 
 
     function getData(page) {
-        axios.post(urls.expenseFetch, {page: page, limit: limit})
+        axios.get(urls.expenseFetch(page, limit))
             .then(response => {
                 for (let idx = 0; idx < response.data.length; idx++) {
                     newDate = new Date(response.data[idx].date);
@@ -43,7 +46,7 @@ const App = () => {
                             currency: response.data[idx].currency,
                             description: response.data[idx].description,
                             category: response.data[idx].category,
-                            date: new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDay()),
+                            date: new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate()),
                             amount: response.data[idx].sum
                         }
                     );
@@ -76,9 +79,14 @@ const App = () => {
     }, []);
 
     return (
-        <div className="App">
-            <NewExpense onAddExpense={addExpenseHandler}/>
-            <Expenses items={expenses} totalData={totalDataCount} dataPages={getData}></Expenses>
+        <div className='frame-profile'>
+            <div id='form'>
+                <div className='card-vertical'>
+                    <NewExpense onAddExpense={addExpenseHandler}/>
+                    <Expenses items={expenses} totalData={totalDataCount} dataPages={getData}></Expenses>
+                </div>
+
+            </div>
         </div>
     );
 };
