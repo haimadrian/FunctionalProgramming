@@ -24,3 +24,5 @@ libraryDependencies += "org.apache.httpcomponents" % "httpcore" % "4.4.14"
 libraryDependencies += "com.github.jwt-scala" %% "jwt-play-json" % "9.0.1"
 
 libraryDependencies ++= Seq(jdbc, ehcache, ws, specs2 % Test, guice)
+
+herokuAppName in Compile := "expenseapphitstat"

@@ -22,3 +22,5 @@ libraryDependencies += "commons-io" % "commons-io" % "20030203.000550"
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.3.2"
 libraryDependencies ++= Seq(jdbc, ehcache, ws, specs2 % Test, guice)
+
+herokuAppName in Compile := "expenseapphituser"

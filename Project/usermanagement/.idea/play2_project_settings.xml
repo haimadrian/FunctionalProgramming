@@ -6,6 +6,7 @@
         <entry key="usermanagement">
           <value>
             <ProjectSettingsEntry>
+              <option name="sourceDir" value="C:\Studies\YearC\Summer\FunctionalProgramming\FunctionalProgramming\Project\usermanagement\app" />
               <option name="confDir" value="C:\Studies\YearC\Summer\FunctionalProgramming\FunctionalProgramming\Project\usermanagement\app" />
               <option name="playDistrPath" value="$USER_HOME$/AppData/Local/Coursier/cache/v1/https/repo1.maven.org/maven2/com/typesafe/play/play_2.13/2.8.8/play_2.13-2.8.8.jar" />
               <option name="templateImports">
