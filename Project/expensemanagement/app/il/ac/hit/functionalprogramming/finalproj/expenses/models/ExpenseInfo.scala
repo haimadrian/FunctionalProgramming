@@ -2,8 +2,10 @@ package il.ac.hit.functionalprogramming.finalproj.expenses.models
 
 import il.ac.hit.functionalprogramming.finalproj.expenses.models.ExpenseInfo._
 import org.bson.BsonValue
-import org.mongodb.scala.bson.{BsonDateTime, BsonInt32, BsonString, Document}
-import play.api.libs.json.{Format, Json}
+import org.mongodb.scala.bson.{BsonDateTime, BsonDouble, BsonString, Document}
+import play.api.libs.json.Reads.dateReads
+import play.api.libs.json.Writes.dateWrites
+import play.api.libs.json.{Format, Json, Reads, Writes}
 
 import java.util.Date
 
@@ -12,7 +14,7 @@ import java.util.Date
  * @since 23-Sep-2021
  */
 case class ExpenseInfo(userId: String,
-                       sum: Int = 0,
+                       sum: Double = 0,
                        currency: String = "",
                        category: String = "",
                        description: String = "",
@@ -21,16 +23,19 @@ case class ExpenseInfo(userId: String,
   def toMap: Map[String, BsonValue] = {
     Map[String, BsonValue](
       USER_ID -> BsonString(userId),
-      SUM -> BsonInt32(sum),
+      SUM -> BsonDouble(sum),
       CURRENCY -> BsonString(currency),
       CATEGORY -> BsonString(category),
       DESCRIPTION -> BsonString(description),
       DATE -> BsonDateTime(date)
-    )
+      )
   }
 }
 
 object ExpenseInfo {
+  private val ISO8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+  implicit val customDateWrites: Writes[java.util.Date] = dateWrites(ISO8601_DATE_FORMAT)
+  implicit val customDateReads: Reads[java.util.Date] = dateReads(ISO8601_DATE_FORMAT)
   implicit val expenseInfoJsonFormat: Format[ExpenseInfo] = Json.using[Json.WithDefaultValues].format[ExpenseInfo]
 
   val USER_ID = "userId"
@@ -41,7 +46,7 @@ object ExpenseInfo {
   val DATE = "date"
 
   def apply(userId: String,
-            sum: Int,
+            sum: Double,
             currency: String,
             category: String,
             description: String,
@@ -51,11 +56,11 @@ object ExpenseInfo {
 
   def apply(document: Document): ExpenseInfo = {
     new ExpenseInfo(document.getString(USER_ID),
-      document.getInteger(SUM),
-      document.getString(CURRENCY),
-      document.getString(CATEGORY),
-      document.getString(DESCRIPTION),
-      document.getDate(DATE))
+                    document.getDouble(SUM),
+                    document.getString(CURRENCY),
+                    document.getString(CATEGORY),
+                    document.getString(DESCRIPTION),
+                    document.getDate(DATE))
   }
 }
 

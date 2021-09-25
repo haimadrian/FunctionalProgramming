@@ -57,7 +57,7 @@ where their content displayed next to them (right) */
     padding-right: 1rem;
     color: rgba(255, 84, 84, 0.9);
     word-break: break-word;
-    max-width: 20rem;
+    max-width: 35rem;
     white-space: pre-wrap;
 }
 

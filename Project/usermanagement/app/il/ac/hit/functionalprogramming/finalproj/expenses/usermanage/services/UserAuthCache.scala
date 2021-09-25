@@ -1,6 +1,6 @@
 package il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.services
 
-import il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.models.UserAuthInfo
+import il.ac.hit.functionalprogramming.finalproj.common.models.UserAuthInfo
 
 import scala.collection.mutable
 
@@ -20,7 +20,9 @@ object UserAuthCache extends mutable.Map[String, UserAuthInfo] {
    * @param jwt A JWT string to get its mapped (already authorized) [[UserAuthInfo]]
    * @return User info
    */
-  override def apply(jwt: String): UserAuthInfo = cache(jwt)
+  override def apply(jwt: String): UserAuthInfo = {
+    cache(jwt)
+  }
 
   /**
    * @see [[mutable.Map.addOne]]
@@ -33,12 +35,16 @@ object UserAuthCache extends mutable.Map[String, UserAuthInfo] {
   /**
    * @see [[mutable.Map.get]]
    */
-  override def get(key: String): Option[UserAuthInfo] = cache.get(key)
+  override def get(key: String): Option[UserAuthInfo] = {
+    cache.get(key)
+  }
 
   /**
    * @see [[mutable.Map.iterator]]
    */
-  override def iterator: Iterator[(String, UserAuthInfo)] = cache.iterator
+  override def iterator: Iterator[(String, UserAuthInfo)] = {
+    cache.iterator
+  }
 
   /**
    * @see [[mutable.Map.subtractOne]]

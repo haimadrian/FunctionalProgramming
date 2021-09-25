@@ -1,17 +1,19 @@
 package il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.services
 
 import com.mongodb.client.model.{Filters, ReplaceOptions}
+import il.ac.hit.functionalprogramming.finalproj.common.services.MongoService
+import il.ac.hit.functionalprogramming.finalproj.common.utils.MongoUtils._
 import il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.models.UserInfo
 import il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.models.UserInfo.{EMAIL, FIREBASE_USER_ID}
 import org.bson.BsonValue
-import org.mongodb.scala.{Document, MongoCollection, Observable, SingleObservable}
+import org.mongodb.scala.model.Projections._
+import org.mongodb.scala.{Document, MongoCollection}
 import play.api.libs.json.Json
 import play.api.{Configuration, Logger}
 
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.{Inject, Singleton}
 import scala.collection.mutable
-import scala.concurrent.Await
 import scala.concurrent.duration.FiniteDuration
 import scala.language.postfixOps
 
@@ -39,42 +41,6 @@ class UserMongoDBService @Inject()(config: Configuration, mongo: MongoService) e
   private val logger: Logger = Logger(this.getClass)
 
   /**
-   * The users Mongo collection. Don't use a val as Play Framework messes up with it during refresh
-   *
-   * @return users collection
-   */
-  private def users: MongoCollection[Document] = mongo.db.getCollection(MONGO_COLLECTION)
-
-  /**
-   * Executes a mongo task and wait up to 5 seconds for a response.
-   *
-   * @param observable The task to wait for
-   * @tparam T Type of the response
-   * @return The response, as sequence
-   */
-  private def executeMongoTask[T](observable: Observable[T]): Seq[T] = Await.result(observable.toFuture(), MONGO_TIMEOUT)
-
-  /**
-   * Executes a mongo task and wait up to 5 seconds for a response.<br/>
-   * Overload for a single expectation
-   *
-   * @param observable The task to wait for
-   * @tparam T Type of the response
-   * @return The response
-   */
-  private def executeMongoTask[T](observable: SingleObservable[T]): T = Await.result(observable.toFuture(), MONGO_TIMEOUT)
-
-  /**
-   * A mongo filter used to find document by firebaseUserId field
-   *
-   * @param userId User identifier to find
-   * @return A filter to be used by mongo tasks
-   */
-  private def byUserId(userId: String) = {
-    Filters.regex(FIREBASE_USER_ID, userId)
-  }
-
-  /**
    * @see [[UserService.insertUser]]
    */
   override def insertUser(userId: String, userEmail: String): Option[UserInfo] = {
@@ -82,11 +48,11 @@ class UserMongoDBService @Inject()(config: Configuration, mongo: MongoService) e
 
     val docAsJson = document.toJson()
     logger.info(s"Inserting document: $docAsJson")
-    val insertResult = executeMongoTask(users.insertOne(document))
+    val insertResult = executeMongoTask(users.insertOne(document), MONGO_TIMEOUT)
 
     if (insertResult.wasAcknowledged) {
       logger.info(s"Document inserted: $docAsJson with _id: ${insertResult.getInsertedId}")
-      Json.parse(docAsJson).validate[UserInfo].asOpt
+      Some(UserInfo(userEmail))
     } else {
       logger.warn("Insert was not acknowledged")
       None
@@ -94,19 +60,29 @@ class UserMongoDBService @Inject()(config: Configuration, mongo: MongoService) e
   }
 
   /**
+   * The users Mongo collection. Don't use a val as Play Framework messes up with it during refresh
+   *
+   * @return users collection
+   */
+  private def users: MongoCollection[Document] = {
+    mongo.db.getCollection(MONGO_COLLECTION)
+  }
+
+  /**
    * @see [[UserService.findUser]]
    */
   override def findUser(userId: String): Option[UserInfo] = {
     logger.info(s"Finding user. [userId=$userId]")
-    val document = executeMongoTask(users.find(byUserId(userId)).first())
+    val document = executeMongoTask(users.find(byUserId(userId)).projection(exclude("_id", "version")).first(),
+                                    MONGO_TIMEOUT)
 
     if ((document == null) || document.isEmpty) {
       logger.info(s"User could not be found. [userId=$userId]")
       None
     } else {
-      val docAsJson = document.toJson()
+      val docAsJson = documentToJson(document)
       logger.info(s"User found: $docAsJson")
-      Json.parse(docAsJson).validate[UserInfo].asOpt
+      Json.parse(docAsJson).validateOpt[UserInfo].get
     }
   }
 
@@ -115,9 +91,17 @@ class UserMongoDBService @Inject()(config: Configuration, mongo: MongoService) e
    */
   override def updateUser(userId: String, userInfo: UserInfo): Option[UserInfo] = {
     val document: AtomicReference[Option[Document]] = new AtomicReference[Option[Document]](None)
+    logger.info(s"updateUser($userId)")
+
+    // First, if user does not exist (e.g. connected with Google), create a record
+    val userCount = executeMongoTask(users.countDocuments(byUserId(userId)), MONGO_TIMEOUT)
+    if (userCount == 0) {
+      insertUser(userId, userInfo.email)
+    }
+
     logger.info(s"Updating document. [userId=$userId, userInfo=$userInfo]")
 
-    // First pull user document to update, so we can copy its existing fields such as _id, etc.
+    // Second, pull user document to update, so we can copy its existing fields such as _id, etc.
     executeMongoTask(users.find(byUserId(userId)).first().map(userDoc => {
       logger.info(s"Document to update: ${userDoc.toJson()}")
 
@@ -136,21 +120,32 @@ class UserMongoDBService @Inject()(config: Configuration, mongo: MongoService) e
         users.replaceOne(
           byUserId(userId),
           document.get.get,
-          new ReplaceOptions().upsert(true)))
+          new ReplaceOptions().upsert(true)), MONGO_TIMEOUT)
 
       if (updateResult.wasAcknowledged) {
-        logger.info(s"Document updated: ${document.get.get.toJson()} with _id: ${updateResult.getUpsertedId}")
+        logger.info(s"Document updated: ${documentToJson(document.get.get)} with _id: ${updateResult.getUpsertedId}")
       } else {
         logger.warn("Update was not acknowledged")
       }
 
       updateResult
-    }))
+    }), MONGO_TIMEOUT)
 
     if (document.get.isDefined) {
-      Json.parse(document.get.get.toJson()).validate[UserInfo].asOpt
+      val doc = docWithExclusions(document.get.get, Set("_id"))
+      Json.parse(documentToJson(doc)).validateOpt[UserInfo].get
     } else {
       None
     }
+  }
+
+  /**
+   * A mongo filter used to find document by firebaseUserId field
+   *
+   * @param userId User identifier to find
+   * @return A filter to be used by mongo tasks
+   */
+  private def byUserId(userId: String) = {
+    Filters.regex(FIREBASE_USER_ID, userId)
   }
 }

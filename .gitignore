@@ -9,3 +9,6 @@ workspace.xml
 package-lock.json
 /Project/expensemanagementapp/src/.env
 /Project/expensemanagementapp/.firebase/*.cache
+
+sbt.json
+runConfigurations/

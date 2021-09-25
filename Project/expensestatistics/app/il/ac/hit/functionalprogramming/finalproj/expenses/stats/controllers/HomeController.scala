@@ -1,7 +1,8 @@
 package il.ac.hit.functionalprogramming.finalproj.expenses.stats.controllers
 
-import javax.inject._
 import play.api.mvc._
+
+import javax.inject._
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -16,8 +17,9 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
-  def index = Action {
-    Ok("Your new application is ready.")
+  def index: Action[AnyContent] = {
+    Action {
+      Ok("Expense Management App: Welcome to Statistics Management service.")
+    }
   }
-
 }

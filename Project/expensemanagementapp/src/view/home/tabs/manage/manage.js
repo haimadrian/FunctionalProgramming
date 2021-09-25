@@ -46,7 +46,7 @@ const App = () => {
                             currency: response.data[idx].currency,
                             description: response.data[idx].description,
                             category: response.data[idx].category,
-                            date: new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate()),
+                            date: newDate,
                             amount: response.data[idx].sum
                         }
                     );
@@ -63,7 +63,7 @@ const App = () => {
             currency: expense.currency,
             category: expense.category,
             description: expense.description,
-            date: expense.date
+            date: new Date(expense.date)
         })
             .then(response => {
             }).catch(httpErrorHandler);

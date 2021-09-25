@@ -66,10 +66,6 @@ export default function Statistic() {
     return (
         <div className='frame-profile'>
             <div id='form'>
-                <div className='horiz'>
-                    <div id='title'>Statistics
-                    </div>
-                </div>
                 <div className='card-vertical'>
                     <Card className="expenses-statistic">
                         <div className='expenses-filter'>

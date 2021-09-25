@@ -4,11 +4,9 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           il.ac.hit.functionalprogramming.finalproj.expenses.stats.controllers.HomeController.index
-# An example controller showing how to use dependency injection
-GET     /count                      il.ac.hit.functionalprogramming.finalproj.expenses.stats.controllers.CountController.count
+GET    /                                        il.ac.hit.functionalprogramming.finalproj.expenses.stats.controllers.HomeController.index
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET    /api/statistics/year/:year/month/:month  il.ac.hit.functionalprogramming.finalproj.expenses.stats.controllers.StatisticsController.getDailyStatistics(year: Int, month: Int)
+GET    /api/statistics/year/:year               il.ac.hit.functionalprogramming.finalproj.expenses.stats.controllers.StatisticsController.getMonthlyStatistics(year: Int)
 
       

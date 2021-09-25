@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/expensecommon.iml" filepath="$PROJECT_DIR$/.idea/modules/expensecommon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/expensecommon-build.iml" filepath="$PROJECT_DIR$/.idea/modules/expensecommon-build.iml" group="sbt-build-modules" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/expensemanagement.iml" filepath="$PROJECT_DIR$/.idea/modules/expensemanagement.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/expensemanagement-build.iml" filepath="$PROJECT_DIR$/.idea/modules/expensemanagement-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/expensemanagement-build.iml" filepath="$PROJECT_DIR$/.idea/modules/expensemanagement-build.iml" group="sbt-build-modules" />
     </modules>
   </component>
 </project>

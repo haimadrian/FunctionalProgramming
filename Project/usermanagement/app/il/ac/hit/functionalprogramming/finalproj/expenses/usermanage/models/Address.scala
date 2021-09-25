@@ -22,7 +22,7 @@ case class Address(street: String = "",
       STATE -> BsonString(state),
       POSTAL_CODE -> BsonInt32(postalCode),
       COUNTRY -> BsonString(country)
-    )
+      )
   }
 }
 
@@ -45,9 +45,9 @@ object Address {
 
   def apply(document: Document): Address = {
     new Address(document.getString(STREET),
-      document.getString(CITY),
-      document.getString(STATE),
-      document.getInteger(POSTAL_CODE),
-      document.getString(COUNTRY))
+                document.getString(CITY),
+                document.getString(STATE),
+                document.getInteger(POSTAL_CODE),
+                document.getString(COUNTRY))
   }
 }

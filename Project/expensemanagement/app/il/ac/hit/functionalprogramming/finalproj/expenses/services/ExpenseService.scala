@@ -5,7 +5,7 @@ import il.ac.hit.functionalprogramming.finalproj.expenses.models.ExpenseInfo
 import java.util.Date
 
 /**
- * A trait to expose CRUD functionality for expenses table.<br/>
+ * A trait to expose CRUD functionality for expenses collection.<br/>
  * We inject a mongo implementation of this trait.
  *
  * @author Haim Adrian
@@ -15,33 +15,56 @@ trait ExpenseService {
   /**
    * Inserts a new expense document to mongo DB expenses collection
    *
-   * @param userId    The userId (firebase) to use, received from client
-   * @param userEmail The email of the registered user
-   * @return Optional user info. (UserInfo upon success, and None upon failure)
+   * @param userId      The userId (firebase) to use, received from client's JWT
+   * @param sum         Amount of expense
+   * @param currency    What currency to use (ILS, USD, GBP, etc.)
+   * @param category    Category of the expense, so we'll use for statistics. (e.g. HEALTH)
+   * @param description A description for the expense
+   * @param date        Date of the expense
+   * @return Optional expense info. ([[ExpenseInfo]] upon success, and [[None]] upon failure)
    */
   def insertExpense(userId: String,
-                    sum: Int,
+                    sum: Double,
                     currency: String,
                     category: String,
                     description: String,
-                    date: Date): Option[ExpenseInfo]
+                    date: Date = new Date(System.currentTimeMillis())): Option[ExpenseInfo]
 
   /**
-   * Read a user document from mongo DB users collection
+   * Read an expense document from mongo DB expenses collection
    *
-   * @param userId The userId (firebase) to find, received from client
-   * @return Optional user info. (UserInfo upon success, and None upon failure or not exists)
+   * @param userId The userId (firebase) to find, received from client's JWT
+   * @param page   What page to read (for Pagination)
+   * @param limit  How much rows to select (also, for Pagination)
+   * @return Optional expense info. ([[ExpenseInfo]] upon success, and [[None]] upon failure or not exists)
    */
-  def findExpenses(userId: String, page: Int, limit: Int): Option[Seq[ExpenseInfo]]
+  def findExpenses(userId: String, page: Int = 0, limit: Int = Int.MaxValue): Option[Seq[ExpenseInfo]]
 
   /**
-   * Update a user document in mongo DB users collection
+   * Read all expense documents from mongo DB expenses collection
    *
-   * @param userId   The userId (firebase) to update, received from client
-   * @param userInfo User info to update. (Email is ignored)
-   * @return Optional user info. (UserInfo upon success, and None upon failure)
+   * @param startTimeMillis Start date to read expenses since
+   * @param endTimeMillis   End date to read expenses until
+   * @return Optional expense info. ([[ExpenseInfo]] upon success, and [[None]] upon failure or not exists)
    */
-  def deleteExpense(userId: String, expenseId: String): Option[ExpenseInfo]
+  def findAllExpenses(startTimeMillis: Long = 0,
+                      endTimeMillis: Long = System.currentTimeMillis()): Option[Seq[ExpenseInfo]]
 
+  /**
+   * Delete an expense document from mongo DB expenses collection
+   *
+   * @param userId    The userId (firebase) to verify this expense belongs to that user
+   * @param expenseId The Mongo ObjectId of the expense to delete
+   * @return Amount of deleted documents (1 for success, 0 means not found)
+   */
+  def deleteExpense(userId: String, expenseId: String): Long
+
+  /**
+   * Count how many expenses there ar for a specified user. This is used by React for
+   * implementing Pagination.
+   *
+   * @param userId The userId (firebase) to find, received from client's JWT
+   * @return Amount of expenses a specified user got.
+   */
   def countExpenses(userId: String): Long
 }

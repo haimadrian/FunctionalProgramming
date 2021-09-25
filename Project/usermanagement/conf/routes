@@ -3,16 +3,16 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /                       il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.HomeController.index
+GET     /                   il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.HomeController.index()
 
-PUT     /api/user/signup        il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.UserController.signup
+PUT     /api/user/signup    il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.UserController.signup()
 
-POST    /api/user/signout       il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.UserController.signout
+POST    /api/user/signout   il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.UserController.signout()
 
-GET     /api/user/info          il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.UserController.getInfo
+GET     /api/user/info      il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.UserController.getInfo()
 
-POST    /api/user/info          il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.UserController.postInfo
+POST    /api/user/info      il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.UserController.postInfo()
 
-GET     /api/auth               il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.AuthorizationController.auth
+GET     /api/auth           il.ac.hit.functionalprogramming.finalproj.expenses.usermanage.controllers.AuthorizationController.auth()
 
       

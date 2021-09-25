@@ -1,28 +1,27 @@
 package il.ac.hit.functionalprogramming.finalproj.expenses.services
 
 import com.mongodb.client.model.Filters
+import il.ac.hit.functionalprogramming.finalproj.common.services.MongoService
+import il.ac.hit.functionalprogramming.finalproj.common.utils.MongoUtils._
 import il.ac.hit.functionalprogramming.finalproj.expenses.models.ExpenseInfo
 import il.ac.hit.functionalprogramming.finalproj.expenses.models.ExpenseInfo._
-import org.bson.BsonValue
-import org.bson.json.{JsonMode, JsonWriterSettings}
+import org.bson.conversions.Bson
 import org.mongodb.scala.model.Projections._
 import org.mongodb.scala.model.Sorts
-import org.mongodb.scala.{Document, MongoCollection, Observable, SingleObservable}
+import org.mongodb.scala.{Document, MongoCollection}
 import play.api.libs.json.Json
 import play.api.{Configuration, Logger}
 
 import java.util.Date
 import javax.inject.{Inject, Singleton}
-import scala.collection.mutable
-import scala.concurrent.Await
 import scala.concurrent.duration.FiniteDuration
 import scala.language.postfixOps
 
 /**
  * This class is a service of the data layer which exposes functionality to perform CRUD
- * operations on users collection.<br/>
+ * operations on expenses collection.<br/>
  * It encapsulates the code relevant to MongoDB, such that it is easier to replace it
- * with another injection of [[UserService]].
+ * with another injection of [[ExpenseService]].
  *
  * @author Haim Adrian
  * @since 20 Sep 2021
@@ -35,53 +34,26 @@ class ExpenseMongoDBService @Inject()(config: Configuration, mongo: MongoService
   private val MONGO_TIMEOUT = config.get[FiniteDuration]("mongodb.timeout")
 
   /**
-   * users collection name
+   * expenses collection name
    */
   private val MONGO_COLLECTION = "expenses"
 
   private val logger: Logger = Logger(this.getClass)
 
   /**
-   * The users Mongo collection. Don't use a val as Play Framework messes up with it during refresh
+   * The expenses Mongo collection. Don't use a val as Play Framework messes up with it during refresh
    *
-   * @return users collection
+   * @return expenses collection
    */
-  private def expenses: MongoCollection[Document] = mongo.db.getCollection(MONGO_COLLECTION)
-
-  /**
-   * Executes a mongo task and wait up to 5 seconds for a response.
-   *
-   * @param observable The task to wait for
-   * @tparam T Type of the response
-   * @return The response, as sequence
-   */
-  private def executeMongoTask[T](observable: Observable[T]): Seq[T] = Await.result(observable.toFuture(), MONGO_TIMEOUT)
-
-  /**
-   * Executes a mongo task and wait up to 5 seconds for a response.<br/>
-   * Overload for a single expectation
-   *
-   * @param observable The task to wait for
-   * @tparam T Type of the response
-   * @return The response
-   */
-  private def executeMongoTask[T](observable: SingleObservable[T]): T = Await.result(observable.toFuture(), MONGO_TIMEOUT)
-
-  /**
-   * A mongo filter used to find document by firebaseUserId field
-   *
-   * @param userId User identifier to find
-   * @return A filter to be used by mongo tasks
-   */
-  private def byUserId(userId: String) = {
-    Filters.regex(USER_ID, userId)
+  private def expenses: MongoCollection[Document] = {
+    mongo.db.getCollection(MONGO_COLLECTION)
   }
 
   /**
    * @see [[ExpenseService.insertExpense]]
    */
   override def insertExpense(userId: String,
-                             sum: Int,
+                             sum: Double,
                              currency: String,
                              category: String,
                              description: String,
@@ -90,11 +62,11 @@ class ExpenseMongoDBService @Inject()(config: Configuration, mongo: MongoService
 
     val docAsJson = documentToJson(document)
     logger.info(s"Inserting document: $docAsJson")
-    val insertResult = executeMongoTask(expenses.insertOne(document))
+    val insertResult = executeMongoTask(expenses.insertOne(document), MONGO_TIMEOUT)
 
     if (insertResult.wasAcknowledged) {
       logger.info(s"Document inserted: $docAsJson with _id: ${insertResult.getInsertedId}")
-      Json.parse(docAsJson).validate[ExpenseInfo].asOpt
+      Json.parse(docAsJson).validateOpt[ExpenseInfo].get
     } else {
       logger.warn("Insert was not acknowledged")
       None
@@ -104,87 +76,96 @@ class ExpenseMongoDBService @Inject()(config: Configuration, mongo: MongoService
   /**
    * @see [[ExpenseService.findExpenses]]
    */
-  override def findExpenses(userId: String, page: Int, limit: Int): Option[Seq[ExpenseInfo]] = {
-    logger.info(s"Finding user. [userId=$userId]")
-    val documents = executeMongoTask(expenses
-      .find(byUserId(userId))
-      .projection(excludeId())
-      .sort(Sorts.descending("date"))
-      .skip(limit * page)
-      .limit(limit))
+  override def findExpenses(userId: String,
+                            page: Int = 0,
+                            limit: Int = Int.MaxValue): Option[Seq[ExpenseInfo]] = {
+    logger.info(s"Finding expenses. [userId=$userId, page=$page, limit=$limit]")
+    val documents = executeMongoTask(expenses.find(byUserId(userId))
+                                             .projection(exclude("_id", "__v"))
+                                             .sort(Sorts.descending(DATE))
+                                             .skip(limit * page)
+                                             .limit(limit),
+                                     MONGO_TIMEOUT)
 
-    if ((documents == null) || documents.isEmpty) {
-      logger.info(s"Expenses could not be found. [userId=$userId, page=$page, limit=$limit]")
+    documentsToModel(documents)
+  }
+
+  /**
+   * @see [[ExpenseService.findAllExpenses]]
+   */
+  override def findAllExpenses(startTimeMillis: Long = 0,
+                               endTimeMillis: Long = System.currentTimeMillis()): Option[Seq[ExpenseInfo]] = {
+    val startTime = new Date(startTimeMillis)
+    val endTime = new Date(endTimeMillis)
+
+    logger.info(s"Finding expenses. [startTime=$startTime, endTime=$endTime]")
+    val filter = Filters.and(Filters.gte(DATE, startTime), Filters.lt(DATE, endTime))
+    val documents = executeMongoTask(expenses.find(filter)
+                                             .projection(exclude("_id", "__v"))
+                                             .sort(Sorts.descending(DATE)),
+                                     MONGO_TIMEOUT)
+
+    documentsToModel(documents)
+  }
+
+  /**
+   * Helper method used to parse expense documents to expense models
+   *
+   * @param documents The documents to parse
+   * @return expense models
+   */
+  private def documentsToModel(documents: Seq[Document]): Option[Seq[ExpenseInfo]] = {
+    if (documents == null) {
+      logger.info(s"Expenses could not be found.")
       None
     } else {
       val stringBuilder = new StringBuilder("[")
       stringBuilder.append(documents.map(documentToJson).mkString(","))
       stringBuilder.append("]")
-      Json.parse(stringBuilder.toString()).validate[Seq[ExpenseInfo]].asOpt
-    }
-  }
+      val value = Json.parse(stringBuilder.toString()).validateOpt[List[ExpenseInfo]]
 
-  override def countExpenses(userId: String): Long = {
-    executeMongoTask(expenses.countDocuments(byUserId(userId)))
+      if (value.isSuccess) {
+        value.get
+      } else {
+        logger.error(value.toString)
+        None
+      }
+    }
   }
 
   /**
    * @see [[ExpenseService.deleteExpense]]
    */
-  override def deleteExpense(userId: String, expenseId: String): Option[ExpenseInfo] = {
-    /*val document: AtomicReference[Option[Document]] = new AtomicReference[Option[Document]](None)
-     logger.info(s"Updating document. [userId=$userId, userInfo=$userInfo]")
+  override def deleteExpense(userId: String, expenseId: String): Long = {
+    logger.info(s"Deleting document. [userId=$userId, expenseId=$expenseId]")
 
-     // First pull user document to update, so we can copy its existing fields such as _id, etc.
-     executeMongoTask(expenses.find(byUserId(userId)).first().map(userDoc => {
-       logger.info(s"Document to update: ${userDoc.toJson()}")
+    // First pull document to make sure it belongs to the specified user
+    val deleteResult = executeMongoTask(
+      expenses.deleteOne(Filters.and(byUserId(userId), Filters.regex("_id", expenseId))), MONGO_TIMEOUT)
 
-       // Collect all properties to update
-       val propertiesToUpdate = mutable.Map[String, BsonValue]()
-       userDoc.foreach(entry => propertiesToUpdate += (entry._1 -> entry._2))
-
-       // Email is not overridable
-       val newValues = userInfo.toMap
-       newValues.remove(EMAIL)
-       propertiesToUpdate.addAll(newValues)
-
-       // Construct the document and execute update
-       document.set(Some(Document(propertiesToUpdate)))
-       val updateResult = executeMongoTask(
-         expenses.replaceOne(
-           byUserId(userId),
-           document.get.get,
-           new ReplaceOptions().upsert(true)))
-
-       if (updateResult.wasAcknowledged) {
-         logger.info(s"Document updated: ${userInfoDocumentToJson(document.get.get)} with _id: ${updateResult.getUpsertedId}")
-       } else {
-         logger.warn("Update was not acknowledged")
-       }
-
-       updateResult
-     }))
-
-     if (document.get.isDefined) {
-       val doc = docWithExclusions(document.get.get, Set("_id"))
-       Json.parse(userInfoDocumentToJson(doc)).validate[UserInfo].asOpt
-     } else {
-       None
-     }*/
-    None
+    if (deleteResult.wasAcknowledged) {
+      logger.info(s"Deleted count: ${deleteResult.getDeletedCount}")
+      deleteResult.getDeletedCount
+    } else {
+      logger.warn("Delete was not acknowledged")
+      0L
+    }
   }
 
-  def documentToJson(document: Document): String = {
-    // This voodoo was created to overcome the BSONDateTime which parses a date to {"$date": DATE}
-    // instead of just giving the DATE. (So we use the SHELL mode)
-    // In addition, ISODate literal is unknown by json, so just remove it.
-    val docAsJson = document.toJson(JsonWriterSettings.builder().outputMode(JsonMode.SHELL).build())
-    docAsJson.replace("ISODate(", "").replace(")", "")
+  /**
+   * @see [[ExpenseService.countExpenses]]
+   */
+  override def countExpenses(userId: String): Long = {
+    executeMongoTask(expenses.countDocuments(byUserId(userId)), MONGO_TIMEOUT)
   }
 
-  def docWithExclusions(document: Document, exclusions: Set[String]): Document = {
-    val properties = mutable.Map[String, BsonValue]()
-    document.filterKeys(!exclusions.contains(_)).foreach(entry => properties += (entry._1 -> entry._2))
-    Document(properties)
+  /**
+   * A mongo filter used to find document by firebaseUserId field
+   *
+   * @param userId User identifier to find
+   * @return A filter to be used by mongo tasks
+   */
+  private def byUserId(userId: String): Bson = {
+    Filters.regex(USER_ID, userId)
   }
 }

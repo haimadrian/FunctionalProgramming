@@ -4,9 +4,12 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           il.ac.hit.functionalprogramming.finalproj.expenses.controllers.HomeController.index
+GET    /                                            il.ac.hit.functionalprogramming.finalproj.expenses.controllers.HomeController.index()
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+POST   /api/expense                                 il.ac.hit.functionalprogramming.finalproj.expenses.controllers.ExpenseController.postExpense()
+DELETE /api/expense                                 il.ac.hit.functionalprogramming.finalproj.expenses.controllers.ExpenseController.deleteExpense()
+GET    /api/expense/fetch/page/:page/limit/:limit   il.ac.hit.functionalprogramming.finalproj.expenses.controllers.ExpenseController.fetchExpenses(page: Int, limit: Int)
+GET    /api/expense/fetch/all/start/:start/end/:end il.ac.hit.functionalprogramming.finalproj.expenses.controllers.ExpenseController.fetchAllExpenses(start: Long, end: Long)
+GET    /api/expense/count                           il.ac.hit.functionalprogramming.finalproj.expenses.controllers.ExpenseController.countExpenses()
 
       

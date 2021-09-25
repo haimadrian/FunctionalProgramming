@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id="expensemanagement [file:/C:/Studies/YearC/Summer/FunctionalProgramming/FunctionalProgramming/Project/expensemanagement/]" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="SBT" type="JAVA_MODULE" version="4">
+<module external.linked.project.id="expensemanagement [file:/C:/Studies/YearC/Summer/FunctionalProgramming/FunctionalProgramming/Project/expensestatistics/]" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="SBT" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output url="file://$MODULE_DIR$/../../target/scala-2.13/classes" />
     <output-test url="file://$MODULE_DIR$/../../target/scala-2.13/test-classes" />
@@ -8,10 +8,17 @@
       <sourceFolder url="file://$MODULE_DIR$/../../app" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../conf" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/../../public" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../target/scala-2.13/routes/main" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../target/scala-2.13/twirl/main" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/../../target" />
+      <excludeFolder url="file://$MODULE_DIR$/../../target/global-logging" />
+      <excludeFolder url="file://$MODULE_DIR$/../../target/streams" />
+      <excludeFolder url="file://$MODULE_DIR$/../../target/task-temp-directory" />
+      <excludeFolder url="file://$MODULE_DIR$/../../target/web" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="expensecommon" exported="" />
     <orderEntry type="library" name="sbt: aopalliance:aopalliance:1.0:jar" level="project" />
     <orderEntry type="library" name="sbt: ch.qos.logback:logback-classic:1.2.3:jar" level="project" />
     <orderEntry type="library" name="sbt: ch.qos.logback:logback-core:1.2.3:jar" level="project" />
@@ -24,6 +31,9 @@
     <orderEntry type="library" name="sbt: com.fasterxml.jackson.module:jackson-module-parameter-names:2.11.4:jar" level="project" />
     <orderEntry type="library" name="sbt: com.fasterxml.jackson.module:jackson-module-paranamer:2.11.4:jar" level="project" />
     <orderEntry type="library" name="sbt: com.fasterxml.jackson.module:jackson-module-scala_2.13:2.11.4:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.github.jwt-scala:jwt-core_2.13:9.0.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.github.jwt-scala:jwt-json-common_2.13:9.0.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.github.jwt-scala:jwt-play-json_2.13:9.0.1:jar" level="project" />
     <orderEntry type="library" name="sbt: com.google.code.findbugs:jsr305:3.0.2:jar" level="project" />
     <orderEntry type="library" name="sbt: com.google.errorprone:error_prone_annotations:2.3.4:jar" level="project" />
     <orderEntry type="library" name="sbt: com.google.guava:failureaccess:1.0.1:jar" level="project" />
@@ -54,11 +64,11 @@
     <orderEntry type="library" name="sbt: com.typesafe.play:play-cache_2.13:2.8.8:jar" level="project" />
     <orderEntry type="library" name="sbt: com.typesafe.play:play-ehcache_2.13:2.8.8:jar" level="project" />
     <orderEntry type="library" name="sbt: com.typesafe.play:play-exceptions:2.8.8:jar" level="project" />
-    <orderEntry type="library" name="sbt: com.typesafe.play:play-functional_2.13:2.8.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.play:play-functional_2.13:2.9.2:jar" level="project" />
     <orderEntry type="library" name="sbt: com.typesafe.play:play-guice_2.13:2.8.8:jar" level="project" />
     <orderEntry type="library" name="sbt: com.typesafe.play:play-jdbc-api_2.13:2.8.8:jar" level="project" />
     <orderEntry type="library" name="sbt: com.typesafe.play:play-jdbc_2.13:2.8.8:jar" level="project" />
-    <orderEntry type="library" name="sbt: com.typesafe.play:play-json_2.13:2.8.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.play:play-json_2.13:2.9.2:jar" level="project" />
     <orderEntry type="library" name="sbt: com.typesafe.play:play-logback_2.13:2.8.8:jar" level="project" />
     <orderEntry type="library" name="sbt: com.typesafe.play:play-server_2.13:2.8.8:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: com.typesafe.play:play-specs2_2.13:2.8.8:jar" level="project" />
@@ -80,12 +90,12 @@
     <orderEntry type="library" scope="TEST" name="sbt: commons-logging:commons-logging:1.2:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: commons-net:commons-net:3.6:jar" level="project" />
     <orderEntry type="library" name="sbt: io.jsonwebtoken:jjwt:0.9.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.projectreactor:reactor-core:3.2.22.RELEASE:jar" level="project" />
     <orderEntry type="library" name="sbt: jakarta.activation:jakarta.activation-api:1.2.2:jar" level="project" />
     <orderEntry type="library" name="sbt: jakarta.transaction:jakarta.transaction-api:1.3.3:jar" level="project" />
     <orderEntry type="library" name="sbt: jakarta.xml.bind:jakarta.xml.bind-api:2.3.3:jar" level="project" />
     <orderEntry type="library" name="sbt: javax.cache:cache-api:1.1.1:jar" level="project" />
     <orderEntry type="library" name="sbt: javax.inject:javax.inject:1:jar" level="project" />
-    <orderEntry type="library" name="sbt: joda-time:joda-time:2.10.5:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: junit:junit:4.13.2:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: net.bytebuddy:byte-buddy-agent:1.10.5:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: net.bytebuddy:byte-buddy:1.10.5:jar" level="project" />
@@ -98,7 +108,7 @@
     <orderEntry type="library" scope="TEST" name="sbt: org.apache.commons:commons-lang3:3.9:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: org.apache.commons:commons-text:1.7:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: org.apache.httpcomponents:httpclient:4.5.9:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="sbt: org.apache.httpcomponents:httpcore:4.4.11:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.apache.httpcomponents:httpcore:4.4.14:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: org.apache.httpcomponents:httpmime:4.5.9:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: org.atteo.classindex:classindex:3.4:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: org.brotli:dec:0.1.2:jar" level="project" />
@@ -117,6 +127,11 @@
     <orderEntry type="library" scope="TEST" name="sbt: org.hamcrest:hamcrest:2.2:jar" level="project" />
     <orderEntry type="library" name="sbt: org.lz4:lz4-java:1.7.1:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: org.mockito:mockito-core:3.2.4:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.mongodb.scala:mongo-scala-bson_2.13:4.3.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.mongodb.scala:mongo-scala-driver_2.13:4.3.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.mongodb:bson:4.3.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.mongodb:mongodb-driver-core:4.3.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.mongodb:mongodb-driver-reactivestreams:4.3.2:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: org.objenesis:objenesis:2.6:jar" level="project" />
     <orderEntry type="library" name="sbt: org.reactivestreams:reactive-streams:1.0.3:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang.modules:scala-java8-compat_2.13:0.9.1:jar" level="project" />

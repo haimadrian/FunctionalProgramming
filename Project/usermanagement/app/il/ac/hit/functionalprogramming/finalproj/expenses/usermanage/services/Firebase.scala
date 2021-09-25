@@ -14,6 +14,8 @@ import java.io.{ByteArrayInputStream, IOException}
  * @since 18 Sep 2021
  */
 object Firebase {
+  private val logger: Logger = Logger(this.getClass)
+
   /**
    * Name of the project as defined at firebase
    */
@@ -23,8 +25,6 @@ object Firebase {
    * Name of the firebase project key file, so we can configure firebase admin sdk.
    */
   private val FIREBASE_ADMIN_SDK_CONF = "expenseapphit-firebase-adminsdk-1qhts-f00f7381b7.json"
-
-  private val logger: Logger = Logger(this.getClass)
 
   /**
    * Reference to [[FirebaseAuth]] for performing JWT authorization.
@@ -39,14 +39,25 @@ object Firebase {
   private def initApp(): FirebaseAuth = {
     logger.info("Initializing Firebase authorization")
 
-    val configFile = getClass.getClassLoader.getResourceAsStream(FIREBASE_ADMIN_SDK_CONF)
-    val json = IOUtil.toString(configFile, Charsets.UTF_8.name)
-    val serviceAccount = new ByteArrayInputStream(json.getBytes(Charsets.UTF_8))
-    val options = FirebaseOptions.builder.setCredentials(GoogleCredentials.fromStream(serviceAccount)).build
-    val firebaseApp = FirebaseApp.initializeApp(options, FIREBASE_APP_NAME)
-    val auth = FirebaseAuth.getInstance(firebaseApp)
-    logger.info("Firebase authorization initialized")
+    var firebaseApp: Option[FirebaseApp] = None
 
-    auth
+    try {
+      // The annoying Play framework forcibly reloads singletons... So make sure we have not
+      // initialized FirebaseApp already...
+      firebaseApp = Some(FirebaseApp.getInstance(FIREBASE_APP_NAME))
+    } catch {
+      case _: IllegalStateException => firebaseApp = None
+    }
+
+    if (firebaseApp.isEmpty) {
+      val configFile = getClass.getClassLoader.getResourceAsStream(FIREBASE_ADMIN_SDK_CONF)
+      val json = IOUtil.toString(configFile, Charsets.UTF_8.name)
+      val serviceAccount = new ByteArrayInputStream(json.getBytes(Charsets.UTF_8))
+      val options = FirebaseOptions.builder.setCredentials(GoogleCredentials.fromStream(serviceAccount)).build
+      firebaseApp = Some(FirebaseApp.initializeApp(options, FIREBASE_APP_NAME))
+      logger.info("Firebase authorization initialized")
+    }
+
+    FirebaseAuth.getInstance(firebaseApp.get)
   }
 }

@@ -10,7 +10,9 @@ import javax.inject.{Inject, Singleton}
  */
 @Singleton
 class HomeController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
-  def index: Action[AnyContent] = Action {
-    Ok("Expense Management App: Welcome to User Management service.")
+  def index: Action[AnyContent] = {
+    Action {
+      Ok("Expense Management App: Welcome to User Management service.")
+    }
   }
 }

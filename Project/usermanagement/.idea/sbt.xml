@@ -7,11 +7,13 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/../expensecommon" />
+            <option value="$PROJECT_DIR$/../expensecommon/project" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/project" />
           </set>
         </option>
-        <option name="sbtVersion" value="1.5.0" />
+        <option name="sbtVersion" value="1.5.5" />
       </SbtProjectSettings>
     </option>
   </component>
