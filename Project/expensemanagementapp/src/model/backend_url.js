@@ -1,6 +1,6 @@
-const expenseManagement = 'http://localhost:9000';
-const userManagement = 'http://localhost:9001';
-const expenseStatistics = 'http://localhost:9002';
+const expenseManagement = 'https://expenseapphit.herokuapp.com';
+const userManagement = 'https://expenseapphituser.herokuapp.com';
+const expenseStatistics = 'https://expenseapphitstat.herokuapp.com';
 
 const urls = {
     userSignUp: `${userManagement}/api/user/signup`,
