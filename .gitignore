@@ -12,3 +12,5 @@ package-lock.json
 
 sbt.json
 runConfigurations/
+
+Test-Files/
